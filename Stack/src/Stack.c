@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #define SIZE 50
 
@@ -216,4 +217,147 @@ void forEachBracket(Stack *p, char *s){
 
 }
 
+void evaluatePostfix(Stack *p, char *a){
+	int i,b,c,r;
+
+	for(i = 0; a[i]; i++){
+
+		if(a[i] >= '0' && a[i]<= '9'){
+			push(p, a[i]-48);
+		}
+		else if(a[i] == '*'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b*c);
+		}
+		else if(a[i] == '+'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b+c);
+		}
+		else if(a[i] == '-'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b-c);
+		}
+		else if(a[i] == '/'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b/c);
+		}
+		else if(a[i] == '%'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b%c);
+		}
+
+	}
+
+}
+
+void evaluatePostfixRadix(Stack *p, char *a){
+	int i,b,c,r,x = 0, f = 0;
+
+	for(i = 0; a[i]; i++){
+
+		if(a[i] >= '0' && a[i]<= '9'){
+			f = 1;
+			x = x*10 + (a[i]-48);
+		}
+		else if(a[i] == '#'){
+			if(f != 0){
+				f = 0;
+				push(p, x);
+				x = 0;
+			}
+		}
+		else if(a[i] == '*'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b*c);
+		}
+		else if(a[i] == '+'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b+c);
+		}
+		else if(a[i] == '-'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b-c);
+		}
+		else if(a[i] == '/'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b/c);
+		}
+		else if(a[i] == '%'){
+			c = pop(p);
+			b = pop(p);
+			push(p, b%c);
+		}
+
+	}
+
+}
+
+int precedence(char ch){
+	switch(ch){
+		case '^':
+		case '$':
+			return 4;
+		case '*':
+		case '/':
+		case '%':
+			return 3;
+		case '+':
+		case '-':
+			return 2;
+		case '(':
+		case ')':
+			return 1;
+	}
+
+	return 0;
+}
+
+void postFix(Stack *p, char *a){
+	int i = 0,j = 0;
+	char ch, post[SIZE];
+
+	for(i = 0; a[i]; i++){
+
+		if(isalpha(a[i]))
+			post[j++] = a[i];
+		else{
+			if(isEmpty(p) || a[i] == '(' || precedence(a[i]) > precedence(peek(p)) || a[i] == '^'){
+
+				push(p, a[i]);
+
+			}
+			else if(a[i] == ')'){
+				while((ch = pop(p)) != ')'){
+					post[j++] = ch;
+				}
+			}
+			else{
+				while(!isEmpty(p) && precedence(a[i]) <= precedence(peek(p))){
+					post[j++] = pop(p);
+				}
+
+				push(p, a[i]);
+			}
+		}
+
+		while(!isEmpty(p)){
+			post[j++] = pop(p);
+		}
+
+		post[j] = '\0';
+
+		puts(post);
+
+	}
+
+}
 
