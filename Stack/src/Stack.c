@@ -7,7 +7,6 @@
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -27,25 +26,53 @@ int push(Stack *p, int v);
 int pop(Stack *p);
 int peek(Stack *p);
 int isEmpty(Stack *p);
+void display(Stack s);
+
 void toBinaryRepresentation();
 void balancedCymbals(Stack *p, char *s);
 void forEachBracket(Stack *p, char *s);
 
 int main(void) {
+
 	Stack s;
-	s.top = -1;
+	int choice,ele;
 	char a[SIZE];
+	s.top = -1;
 
-	//void toBinaryRepresentation();
+	printf("Enter choice : 1 for push, 2 for pop, 2 for display entire stack\n");
 
-	setbuf(stdout, NULL);
+	do{
+	   printf("Enter choice : ");
+	   scanf("%d", &choice);
 
-	//toBinaryRepresentation(&s);
+	   switch(choice)
+	   {
+	     case 1:{
+	       printf("Enter an element\n");
+	       scanf("%d",&ele);
+	       push(&s, ele);
 
-	printf("Enter a string : \n");
-	gets(a);
+	     break;
+	     }
+	     case 2:{
+	       ele = pop(&s);
+	     break;
+	     }
+	     case 3:{
 
-	forEachBracket(&s, a);
+		display(s);
+
+	      break;
+	     }
+	     default:
+	     {
+		choice = -1;
+	     }
+
+	   }
+	}while(choice != -1);
+
+	getch();
 
 	return EXIT_SUCCESS;
 }
@@ -88,6 +115,15 @@ int peek(Stack *p){
 
 int isEmpty(Stack *p){
 	return p->top == -1;
+}
+
+void display(Stack s){
+   while(!isEmpty(&s))
+   {
+    printf("%d\t",pop(&s));
+
+   }
+
 }
 
 /*
@@ -360,4 +396,3 @@ void postFix(Stack *p, char *a){
 	}
 
 }
-
