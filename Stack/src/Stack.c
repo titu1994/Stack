@@ -31,6 +31,11 @@ void display(Stack s);
 void toBinaryRepresentation();
 void balancedCymbals(Stack *p, char *s);
 void forEachBracket(Stack *p, char *s);
+void evaluatePostfix(Stack *p, char *a);
+void evaluatePostfixRadix(Stack *p, char *a);
+int precedence(char ch);
+void toPostFix(Stack *p, char *a);
+
 
 int main(void) {
 
@@ -42,34 +47,124 @@ int main(void) {
 	printf("Enter choice : 1 for push, 2 for pop, 2 for display entire stack\n");
 
 	do{
-	   printf("Enter choice : ");
-	   scanf("%d", &choice);
+		printf("Enter choice : ");
+		scanf("%d", &choice);
 
-	   switch(choice)
-	   {
-	     case 1:{
-	       printf("Enter an element\n");
-	       scanf("%d",&ele);
-	       push(&s, ele);
+		switch(choice)
+		{
+		case 1:{
+			//Add element
 
-	     break;
-	     }
-	     case 2:{
-	       ele = pop(&s);
-	     break;
-	     }
-	     case 3:{
+			printf("Enter an element\n");
+			scanf("%d",&ele);
+			push(&s, ele);
 
-		display(s);
+			break;
+		}
+		case 2:{
+			//Remove element
 
-	      break;
-	     }
-	     default:
-	     {
-		choice = -1;
-	     }
+			ele = pop(&s);
+			break;
+		}
+		case 3:{
+			//Display
 
-	   }
+			display(s);
+			break;
+		}
+		case 4:{
+			//Convert to binary representation
+
+			Stack t;
+			t.top = -1;
+
+			toBinaryRepresentation(&t);
+			break;
+		}
+		case 4:{
+			//Balanced Cymbals
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a string\n");
+			gets(string);
+
+			balancedCymbals(&t, string);
+
+			break;
+		}
+		case 5:{
+			//For Each Bracket
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a string\n");
+			gets(string);
+
+			forEachBracket(&t, string);
+
+			break;
+		}
+		case 6:{
+			//Evaluate Post Fix
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a string\n");
+			gets(string);
+
+			evaluatePostfix(&t, string);
+
+			break;
+		}
+		case 7:{
+			//Evaluate Radix Post Fix
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a string using # to separate a number\n");
+			gets(string);
+
+			evaluatePostfixRadix(&t, string);
+
+			break;
+		}
+		case 8:{
+			//To Post Fix
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a expression  to convert to post fix\n");
+			gets(string);
+
+			toPostFix(&t, string);
+
+			break;
+		}
+
+
+
+		default:{
+			choice = -1;
+		}
+
+		}
 	}while(choice != -1);
 
 	getch();
@@ -357,7 +452,7 @@ int precedence(char ch){
 	return 0;
 }
 
-void postFix(Stack *p, char *a){
+void toPostFix(Stack *p, char *a){
 	int i = 0,j = 0;
 	char ch, post[SIZE];
 
