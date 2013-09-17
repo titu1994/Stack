@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
+
 
 #define SIZE 50
 
@@ -30,21 +32,22 @@ void display(Stack s);
 
 void toBinaryRepresentation();
 void balancedCymbals(Stack *p, char *s);
-void forEachBracket(Stack *p, char *s);
+int forEachBracket(Stack *p, char *s);
 void evaluatePostfix(Stack *p, char *a);
 void evaluatePostfixRadix(Stack *p, char *a);
 int precedence(char ch);
 void toPostFix(Stack *p, char *a);
-
+void toPreFix(Stack *p, char *a);
 
 int main(void) {
 
 	Stack s;
 	int choice,ele;
-	char a[SIZE];
 	s.top = -1;
 
-	printf("Enter choice : 1 for push, 2 for pop, 2 for display entire stack\n");
+	setbuf(stdout, NULL);
+
+	printf("Enter choice : 1 for push, 2 for pop, 3 for display entire stack\n");
 
 	do{
 		printf("Enter choice : ");
@@ -82,7 +85,7 @@ int main(void) {
 			toBinaryRepresentation(&t);
 			break;
 		}
-		case 4:{
+		case 5:{
 			//Balanced Cymbals
 
 			Stack t;
@@ -90,14 +93,14 @@ int main(void) {
 
 			char string[SIZE];
 
-			printf("Enter a string\n");
-			gets(string);
+			printf("Enter a string to check for balanced\n");
+			scanf("%s", string);
 
 			balancedCymbals(&t, string);
 
 			break;
 		}
-		case 5:{
+		case 6:{
 			//For Each Bracket
 
 			Stack t;
@@ -105,14 +108,19 @@ int main(void) {
 
 			char string[SIZE];
 
-			printf("Enter a string\n");
-			gets(string);
+			printf("Enter a string of any expression with brackets to check for balanced\n");
+			scanf("%s", string);
 
-			forEachBracket(&t, string);
+			if(forEachBracket(&t, string)){
+				printf("Cymbals are balanced\n");
+			}
+			else{
+				printf("Unbalanced\n");
+			}
 
 			break;
 		}
-		case 6:{
+		case 7:{
 			//Evaluate Post Fix
 
 			Stack t;
@@ -120,14 +128,14 @@ int main(void) {
 
 			char string[SIZE];
 
-			printf("Enter a string\n");
-			gets(string);
+			printf("Enter a string to  evaluate single digits\n");
+			scanf("%s", string);
 
 			evaluatePostfix(&t, string);
 
 			break;
 		}
-		case 7:{
+		/*case 8:{
 			//Evaluate Radix Post Fix
 
 			Stack t;
@@ -136,24 +144,38 @@ int main(void) {
 			char string[SIZE];
 
 			printf("Enter a string using # to separate a number\n");
-			gets(string);
+			scanf("%s", string);
 
 			evaluatePostfixRadix(&t, string);
 
 			break;
-		}
-		case 8:{
-			//To Post Fix
+		}*/
+		case 9:{
+			//To convert string to Post Fix
 
 			Stack t;
 			t.top = -1;
 
 			char string[SIZE];
 
-			printf("Enter a expression  to convert to post fix\n");
-			gets(string);
+			printf("Enter a expression  to convert to Post fix\n");
+			scanf("%s", string);
 
 			toPostFix(&t, string);
+			break;
+		}
+		case 10:{
+			//To convert string to Pre Fix
+
+			Stack t;
+			t.top = -1;
+
+			char string[SIZE];
+
+			printf("Enter a expression  to convert to Pre fix\n");
+			scanf("%s", string);
+
+			toPreFix(&t, string);
 
 			break;
 		}
@@ -167,7 +189,7 @@ int main(void) {
 		}
 	}while(choice != -1);
 
-	getch();
+	//getch();
 
 	return EXIT_SUCCESS;
 }
@@ -274,7 +296,7 @@ void balancedCymbals(Stack *p, char *s){
 
 }
 
-void forEachBracket(Stack *p, char *s){
+int forEachBracket(Stack *p, char *s){
 
 	int i, c;
 
@@ -297,8 +319,8 @@ void forEachBracket(Stack *p, char *s){
 
 		if(s[i] == ')' || s[i] == '}' || s[i] == ']'){
 			if(p->top == -1){
-				printf("The brackets are unbalanced because of empty close\n");
-				return;
+				//printf("The brackets are unbalanced because of empty close\n");
+				return 0;
 			}
 
 			if(s[i] == ')'){
@@ -308,8 +330,8 @@ void forEachBracket(Stack *p, char *s){
 					pop(p);
 				}
 				else{
-					printf("The brackets are unbalanced because of wrong order\n");
-					return;
+					//printf("The brackets are unbalanced because of wrong order\n");
+					return 0;
 				}
 			}
 			else if(s[i] == '}'){
@@ -319,8 +341,8 @@ void forEachBracket(Stack *p, char *s){
 					pop(p);
 				}
 				else{
-					printf("The brackets are unbalanced because of wrong order\n");
-					return;
+					//printf("The brackets are unbalanced because of wrong order\n");
+					return 0;
 				}
 			}
 			else if(s[i] == ']'){
@@ -330,8 +352,8 @@ void forEachBracket(Stack *p, char *s){
 					pop(p);
 				}
 				else{
-					printf("The brackets are unbalanced because of wrong order\n");
-					return;
+					//printf("The brackets are unbalanced because of wrong order\n");
+					return 0;
 				}
 			}
 
@@ -340,95 +362,127 @@ void forEachBracket(Stack *p, char *s){
 	}
 
 	if(isEmpty(p)){
-		printf("The brackets are balanced\n");
+		//printf("The brackets are balanced\n");
+		return 1;
 	}
 	else{
-		printf("The brackets are unbalanced\n");
+		//printf("The brackets are unbalanced\n");
+		return 0;
 	}
 
 }
 
 void evaluatePostfix(Stack *p, char *a){
-	int i,b,c,r;
+	int i,b,c;
 
-	for(i = 0; a[i]; i++){
 
-		if(a[i] >= '0' && a[i]<= '9'){
-			push(p, a[i]-48);
+	if(forEachBracket(p, a)){
+
+		toPostFix(p, a);
+
+		while(!isEmpty(p)){
+			pop(p);
 		}
-		else if(a[i] == '*'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b*c);
+
+		for(i = 0; a[i]; i++){
+
+			if(a[i] >= '0' && a[i]<= '9'){
+				push(p, a[i]-48);
+			}
+			else if(a[i] == '*'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b*c);
+			}
+			else if(a[i] == '+'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b+c);
+			}
+			else if(a[i] == '-'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b-c);
+			}
+			else if(a[i] == '/'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b/c);
+			}
+			else if(a[i] == '%'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b%c);
+			}
+
 		}
-		else if(a[i] == '+'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b+c);
-		}
-		else if(a[i] == '-'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b-c);
-		}
-		else if(a[i] == '/'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b/c);
-		}
-		else if(a[i] == '%'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b%c);
-		}
+
+		printf("%d\n", pop(p));
 
 	}
+	else{
+		printf("The string is not balanced\n");
+	}
+
 
 }
 
 void evaluatePostfixRadix(Stack *p, char *a){
-	int i,b,c,r,x = 0, f = 0;
+	int i,b,c,x = 0, f = 0;
 
-	for(i = 0; a[i]; i++){
 
-		if(a[i] >= '0' && a[i]<= '9'){
-			f = 1;
-			x = x*10 + (a[i]-48);
-		}
-		else if(a[i] == '#'){
-			if(f != 0){
-				f = 0;
-				push(p, x);
-				x = 0;
+
+	if(forEachBracket(p, a)){
+
+		toPostFix(p, a);
+
+		for(i = 0; a[i]; i++){
+
+			if(a[i] >= '0' && a[i]<= '9'){
+				f = 1;
+				x = x*10 + (a[i]-48);
 			}
+			else if(a[i] == '#'){
+				if(f != 0){
+					f = 0;
+					push(p, x);
+					x = 0;
+				}
+			}
+			else if(a[i] == '*'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b*c);
+			}
+			else if(a[i] == '+'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b+c);
+			}
+			else if(a[i] == '-'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b-c);
+			}
+			else if(a[i] == '/'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b/c);
+			}
+			else if(a[i] == '%'){
+				c = pop(p);
+				b = pop(p);
+				push(p, b%c);
+			}
+
 		}
-		else if(a[i] == '*'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b*c);
-		}
-		else if(a[i] == '+'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b+c);
-		}
-		else if(a[i] == '-'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b-c);
-		}
-		else if(a[i] == '/'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b/c);
-		}
-		else if(a[i] == '%'){
-			c = pop(p);
-			b = pop(p);
-			push(p, b%c);
-		}
+
+		printf("%d\n", pop(p));
 
 	}
+
+
+
 
 }
 
@@ -458,36 +512,80 @@ void toPostFix(Stack *p, char *a){
 
 	for(i = 0; a[i]; i++){
 
-		if(isalpha(a[i]))
+		if(isalpha(a[i]) || isdigit(a[i]))
 			post[j++] = a[i];
+
+		else if(isEmpty(p) || a[i] == '(' || precedence(a[i]) >= precedence(peek(p)) || a[i] == '^'){
+
+			push(p, a[i]);
+
+		}
+
+		else if(a[i] == ')'){
+			while((ch = pop(p)) != '('){
+				post[j++] = ch;
+			}
+		}
 		else{
-			if(isEmpty(p) || a[i] == '(' || precedence(a[i]) > precedence(peek(p)) || a[i] == '^'){
-
-				push(p, a[i]);
-
+			while(!isEmpty(p) && precedence(a[i]) < precedence(peek(p))){
+				post[j++] = pop(p);
 			}
-			else if(a[i] == ')'){
-				while((ch = pop(p)) != ')'){
-					post[j++] = ch;
-				}
-			}
-			else{
-				while(!isEmpty(p) && precedence(a[i]) <= precedence(peek(p))){
-					post[j++] = pop(p);
-				}
 
-				push(p, a[i]);
-			}
+			push(p, a[i]);
 		}
-
-		while(!isEmpty(p)){
-			post[j++] = pop(p);
-		}
-
-		post[j] = '\0';
-
-		puts(post);
-
 	}
 
+	while(!isEmpty(p)){
+		post[j++] = pop(p);
+	}
+
+	post[j] = '\0';
+
+	puts(post);
+
+
+}
+
+void toPreFix(Stack *p, char *a){
+	int i,j = 0;
+	int n = strlen(a);
+	char pre[SIZE], ch;
+
+	for(i = n-1; i >= 0; i--){
+
+		if(isalpha(a[i]) || isdigit(a[i])){
+			pre[j++] = a[i];
+		}
+
+		else if(isEmpty(p) && a[i] == '^' && peek(p) == '^'){
+			pre[j++] = a[i];
+		}
+		else if(!isEmpty(p) || a[i] == ')' || precedence(a[i]) >= precedence(peek(p))){
+			push(p, a[i]);
+		}
+		else if(a[i] == '('){
+			while((ch = pop(p)) != ')'){
+				pre[j++] = ch;
+			}
+		}
+		else{
+			while(!isEmpty(p) && precedence(a[i]) < precedence(peek(p))){
+				pre[j++] = pop(p);
+			}
+
+			push(p, a[i]);
+		}
+	}
+
+	while(!isEmpty(p)){
+		pre[j++] = pop(p);
+	}
+
+	pre[j] = '\0';
+
+	n = strlen(pre);
+
+	strrev(pre);
+
+	puts(pre);
 }
