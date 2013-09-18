@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-
+#include <math.h>
 
 #define SIZE 50
 
@@ -47,7 +47,7 @@ int main(void) {
 
 	setbuf(stdout, NULL);
 
-	printf("Enter choice : 1 for push, 2 for pop, 3 for display entire stack\n");
+	printf("Enter choice : 1 for push, 2 for pop, 3 for display entire stack\n4 for binary representation\n5 for balanced cymbals\n6 for each bracket check\n7 for evaluate Post Fix String\n9 to convert Infix to PostFix\n10 to convert Infix to Prefix\n");
 
 	do{
 		printf("Enter choice : ");
@@ -128,7 +128,7 @@ int main(void) {
 
 			char string[SIZE];
 
-			printf("Enter a string to  evaluate single digits\n");
+			printf("Enter a string to  evaluate single digits in postfix\n");
 			scanf("%s", string);
 
 			evaluatePostfix(&t, string);
@@ -264,6 +264,8 @@ void toBinaryRepresentation(Stack *p){
 		printf("%d\t",pop(p));
 	}
 
+	printf("\n");
+
 }
 
 void balancedCymbals(Stack *p, char *s){
@@ -377,13 +379,6 @@ void evaluatePostfix(Stack *p, char *a){
 
 
 	if(forEachBracket(p, a)){
-
-		toPostFix(p, a);
-
-		while(!isEmpty(p)){
-			pop(p);
-		}
-
 		for(i = 0; a[i]; i++){
 
 			if(a[i] >= '0' && a[i]<= '9'){
@@ -414,6 +409,11 @@ void evaluatePostfix(Stack *p, char *a){
 				b = pop(p);
 				push(p, b%c);
 			}
+			else if(a[i] == '^'){
+				c = pop(p);
+				b = pop(p);
+				push(p, (int) pow(b,c));
+			}
 
 		}
 
@@ -433,9 +433,6 @@ void evaluatePostfixRadix(Stack *p, char *a){
 
 
 	if(forEachBracket(p, a)){
-
-		toPostFix(p, a);
-
 		for(i = 0; a[i]; i++){
 
 			if(a[i] >= '0' && a[i]<= '9'){
@@ -474,16 +471,20 @@ void evaluatePostfixRadix(Stack *p, char *a){
 				b = pop(p);
 				push(p, b%c);
 			}
+			else if(a[i] == '^'){
+				c = pop(p);
+				b = pop(p);
+				push(p, (int) pow(b,c));
+			}
 
 		}
 
 		printf("%d\n", pop(p));
 
 	}
-
-
-
-
+	else{
+		printf("Unbalanced String\n");
+	}
 }
 
 int precedence(char ch){
