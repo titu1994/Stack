@@ -209,7 +209,7 @@ int push(Stack *p, int v){
 int pop(Stack *p){
 
 	if(p->top == -1){
-		printf("The stack is empty\n");
+		//printf("The stack is empty\n");
 		return -1;
 	}
 	else{
@@ -221,7 +221,7 @@ int pop(Stack *p){
 int peek(Stack *p){
 
 	if(p->top == -1){
-		printf("The stack is empty\n");
+		//printf("The stack is empty\n");
 		return 0;
 	}
 	else{
@@ -557,24 +557,28 @@ void toPreFix(Stack *p, char *a){
 			pre[j++] = a[i];
 		}
 
-		else if(isEmpty(p) && a[i] == '^' && peek(p) == '^'){
-			pre[j++] = a[i];
-		}
-		else if(!isEmpty(p) || a[i] == ')' || precedence(a[i]) >= precedence(peek(p))){
-			push(p, a[i]);
-		}
-		else if(a[i] == '('){
-			while((ch = pop(p)) != ')'){
-				pre[j++] = ch;
-			}
-		}
 		else{
-			while(!isEmpty(p) && precedence(a[i]) < precedence(peek(p))){
-				pre[j++] = pop(p);
+			if(isEmpty(p) && a[i] == '^' && peek(p) == '^'){
+				pre[j++] = a[i];
+			}
+			else if(!isEmpty(p) || a[i] == ')' || precedence(a[i]) >= precedence(peek(p))){
+				push(p, a[i]);
+			}
+			else if(a[i] == '('){
+				while((ch = pop(p)) != ')'){
+					pre[j++] = ch;
+				}
+			}
+			else{
+				while(!isEmpty(p) && precedence(a[i]) < precedence(peek(p))){
+					pre[j++] = pop(p);
+				}
+
+				push(p, a[i]);
 			}
 
-			push(p, a[i]);
 		}
+
 	}
 
 	while(!isEmpty(p)){
