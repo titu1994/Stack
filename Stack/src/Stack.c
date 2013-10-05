@@ -240,7 +240,7 @@ void display(Stack s){
     printf("%d\t",pop(&s));
 
    }
-
+   printf("\n");
 }
 
 /*
